@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 #include "stdafx.h"
-
+#include<cstdlib>
 #include"UnicodeFileIO.h"
 
 using namespace std;
@@ -162,89 +162,94 @@ UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::WriteString(const cha
 	return ret;
 }
 
-UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::OpenStream(const char* srcFileName, std::basic_istream<char16_t>** ppStream, Endian& endian) {
-	Ret ret = Ret::Unknown;
-	basic_stringstream<char16_t>* pTemp = new basic_stringstream<char16_t>;
 
-	if (pTemp == nullptr) {
+template<> Ret UNICODEFILEIO_CALL UnicodeFileIO::Manager<basic_istream<char16_t>>::OpenStream(const char* fileName, Endian _endian) {
+	Ret ret;
+	pStream = new basic_stringstream<char16_t>;
+
+	if (pStream == nullptr) {
 		ret = Ret::MemoryAllocationErr;
-	}else{
-		ret = ReadString(srcFileName, *pTemp, endian);
+	}
+	else {
+		ret = ReadString(fileName, *((basic_stringstream<char16_t>*)pStream), endian);
 		if (ret != Ret::OK) {
-			delete pTemp;
-		}else{
-			*ppStream = pTemp;
+			delete pStream;
 		}
 	}
 	return ret;
 }
-
-UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::CloseStream(const char* srcFileName, std::basic_istream<char16_t>** ppStream, const Endian& endian) {
-	delete *ppStream;
+template<> Ret UNICODEFILEIO_CALL UnicodeFileIO::Manager<basic_istream<char16_t>>::CloseStream() {
+	delete pStream;
 	return Ret::OK;
 }
 
-UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::OpenStream(const char* desFileName, std::basic_ostream<char16_t>** ppStream, Endian& endian) {
-	*ppStream = new basic_stringstream<char16_t>;
-	if (*ppStream == nullptr) {
+template<> Ret UNICODEFILEIO_CALL UnicodeFileIO::Manager<basic_ostream<char16_t>>::OpenStream(const char* fileName, Endian _endian) {
+	fileNameBuf = new char[bufSize];
+	if (fileNameBuf == nullptr) return Ret::MemoryAllocationErr;
+	if(strcpy_s(fileNameBuf, bufSize, fileName)!=0) return Ret::BufferErr;
+
+	if (_endian == Endian::None) return Ret::DesFile_UnknownBom;
+	endian = _endian;
+
+	pStream = new basic_stringstream<char16_t>;
+	if (pStream == nullptr) {
 		return Ret::MemoryAllocationErr;
 	}
 	else {
 		return Ret::OK;
 	}
+	return Ret::OK;
 }
 
-UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::CloseStream(const char* desFileName, std::basic_ostream<char16_t>** ppStream, const Endian& endian) {
+template<> Ret UNICODEFILEIO_CALL UnicodeFileIO::Manager<basic_ostream<char16_t>>::CloseStream() {
 	Ret ret;
-	basic_stringstream<char16_t>* pStringStream;
-	if (ppStream == nullptr) {
+	if (pStream == nullptr) {
 		ret = Ret::NullPointerRefernce;
 	}
 	else {
-		pStringStream = dynamic_cast<basic_stringstream<char16_t>*>(*ppStream);
+		basic_stringstream<char16_t>* pStringStream = dynamic_cast<basic_stringstream<char16_t>*>(pStream);
 		if (pStringStream == nullptr) {
-			ret =  Ret::InvalidStreamObject;
-			delete *ppStream;
+			ret = Ret::InvalidStreamObject;
+			delete pStream;
 		}
 		else {
-			ret = WriteString(desFileName, *pStringStream, endian);
+			ret = WriteString(fileNameBuf, *pStringStream, endian);
 			delete pStringStream;
 		}
 	}
+	delete[] fileNameBuf;
 	return ret;
 }
 
-UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::OpenStream(const char* srcFileName, std::basic_istream<char>** ppStream, Endian& endian) {
+template<> Ret UNICODEFILEIO_CALL UnicodeFileIO::Manager<basic_istream<char>>::OpenStream(const char* fileName, Endian _endian) {
 	Ret ret;
-	basic_ifstream<char>* pTemp = new basic_ifstream<char>(srcFileName);
+	pStream = new basic_ifstream<char>(fileName);
 
-	if (pTemp == nullptr) {
+	if (pStream == nullptr) {
 		ret = Ret::MemoryAllocationErr;
 	}
 	else {
-		if(pTemp->is_open()){
-			*ppStream = pTemp;
+		if (((basic_ifstream<char>*)pStream)->is_open()) {
 			ret = Ret::OK;
 		}
 		else {
-			delete pTemp;
+			delete pStream;
 			ret = Ret::SrcFile_OpenErr;
 		}
 	}
 	return ret;
 }
 
-UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::CloseStream(const char* srcFileName, std::basic_istream<char>** ppStream, const Endian& endian) {
+template<> Ret UNICODEFILEIO_CALL UnicodeFileIO::Manager<basic_istream<char>>::CloseStream() {
 	Ret ret;
-	basic_ifstream<char>* pifstream;
-	if (ppStream == nullptr) {
+	if (pStream == nullptr) {
 		ret = Ret::NullPointerRefernce;
 	}
 	else {
-		pifstream = dynamic_cast<basic_ifstream<char>*>(*ppStream);
+		basic_ifstream<char>* pifstream = dynamic_cast<basic_ifstream<char>*>(pStream);
 		if (pifstream == nullptr) {
 			ret = Ret::InvalidStreamObject;
-			delete *ppStream;
+			delete pStream;
 		}
 		else {
 			pifstream->close();
@@ -255,37 +260,34 @@ UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::CloseStream(const cha
 	return ret;
 }
 
-UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::OpenStream(const char* desFileName, std::basic_ostream<char>** ppStream, Endian& endian) {
+template<> Ret UNICODEFILEIO_CALL UnicodeFileIO::Manager<basic_ostream<char>>::OpenStream(const char* fileName, Endian _endian) {
 	Ret ret;
-	basic_ofstream<char>* pTemp = new basic_ofstream<char>(desFileName);
+	pStream = new basic_ofstream<char>(fileName);
 
-	if (pTemp == nullptr) {
+	if (pStream == nullptr) {
 		ret = Ret::MemoryAllocationErr;
 	}
 	else {
-		if (pTemp->is_open()) {
-			*ppStream = pTemp;
+		if (((basic_ofstream<char>*)pStream)->is_open()) {
 			ret = Ret::OK;
 		}
 		else {
-			delete pTemp;
+			delete pStream;
 			ret = Ret::DesFile_OpenErr;
 		}
 	}
 	return ret;
 }
-
-UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::CloseStream(const char* desFileName, std::basic_ostream<char>** ppStream, const Endian& endian) {
+template<> Ret UNICODEFILEIO_CALL UnicodeFileIO::Manager<basic_ostream<char>>::CloseStream() {
 	Ret ret;
-	basic_ofstream<char>* pofstream;
-	if (ppStream == nullptr) {
+	if (pStream == nullptr) {
 		ret = Ret::NullPointerRefernce;
 	}
 	else {
-		pofstream = dynamic_cast<basic_ofstream<char>*>(*ppStream);
+		basic_ofstream<char>* pofstream = dynamic_cast<basic_ofstream<char>*>(pStream);
 		if (pofstream == nullptr) {
 			ret = Ret::InvalidStreamObject;
-			delete *ppStream;
+			delete pStream;
 		}
 		else {
 			pofstream->close();
