@@ -27,7 +27,7 @@ using namespace UnicodeFileIO;
 void test() {
 	basic_stringstream<char16_t> ss;
 	basic_string<char16_t> str;
-	utf16_endian endian;
+	Endian endian;
 	if (ReadString("..\\TestData\\Unicode(UTF-16,BOM).txt", ss, endian) == UnicodeFileIO::Ret::OK) {
 		getline(ss, str);
 
@@ -36,7 +36,35 @@ void test() {
 
 }
 
+bool test2() {
+	UnicodeFileIO::Manager<basic_istream<char16_t>> ism;
+	UnicodeFileIO::Manager<basic_ostream<char16_t>> osm;
+	basic_string<char16_t> str;
+	if (ism.OpenStream("..\\TestData\\Unicode(UTF-16,BOM).txt") == Ret::OK) {
+		basic_istream<char16_t>& is = *(ism.pStream);
+		getline(is, str);
+
+		ism.CloseStream();
+
+		if (osm.OpenStream("..\\TestData\\Unicode(UTF-16,BOM)_out.txt", ism.endian) == Ret::OK) {
+			basic_ostream<char16_t>& os = *(osm.pStream);
+			os << str;
+
+			osm.CloseStream();
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
+}
+
+
 int main() {
-	test();
+	//test();
+	test2();
 	return 0;
 }
