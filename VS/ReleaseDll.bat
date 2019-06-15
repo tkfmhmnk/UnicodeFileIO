@@ -1,0 +1,28 @@
+mkdir UnicodeFileIO
+mkdir UnicodeFileIO\lib
+mkdir UnicodeFileIO\lib\x86
+mkdir UnicodeFileIO\lib\x86\Debug
+mkdir UnicodeFileIO\lib\x86\Release
+mkdir UnicodeFileIO\lib\x64
+mkdir UnicodeFileIO\lib\x64\Debug
+mkdir UnicodeFileIO\lib\x64\Release
+mkdir UnicodeFileIO\include
+mkdir UnicodeFileIO\PropertySheet
+
+copy Debug\libUnicodeFileIO.* UnicodeFileIO\lib\x86\Debug
+copy Release\libUnicodeFileIO.* UnicodeFileIO\lib\x86\Release
+
+copy x64\Debug\libUnicodeFileIO.* UnicodeFileIO\lib\x64\Debug
+copy x64\Release\libUnicodeFileIO.* UnicodeFileIO\lib\x64\Release
+
+copy libUnicodeFileIO\UnicodeFileIO.h UnicodeFileIO\include
+
+copy UnicodeFileIO_x64_Debug.props UnicodeFileIO\PropertySheet
+copy UnicodeFileIO_x64_Release.props UnicodeFileIO\PropertySheet
+copy UnicodeFileIO_x86_Debug.props UnicodeFileIO\PropertySheet
+copy UnicodeFileIO_x86_Release.props UnicodeFileIO\PropertySheet
+
+del UnicodeFileIO.zip
+powershell compress-archive UnicodeFileIO UnicodeFileIO.zip
+rmdir /s /q UnicodeFileIO
+pause
