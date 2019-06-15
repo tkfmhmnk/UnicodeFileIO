@@ -17,10 +17,7 @@ copy x64\Release\libUnicodeFileIO.* UnicodeFileIO\lib\x64\Release
 
 copy libUnicodeFileIO\UnicodeFileIO.h UnicodeFileIO\include
 
-copy UnicodeFileIO_x64_Debug.props UnicodeFileIO\PropertySheet
-copy UnicodeFileIO_x64_Release.props UnicodeFileIO\PropertySheet
-copy UnicodeFileIO_x86_Debug.props UnicodeFileIO\PropertySheet
-copy UnicodeFileIO_x86_Release.props UnicodeFileIO\PropertySheet
+copy UnicodeFileIO.props UnicodeFileIO\PropertySheet
 
 del UnicodeFileIO.zip
 powershell compress-archive UnicodeFileIO UnicodeFileIO.zip
