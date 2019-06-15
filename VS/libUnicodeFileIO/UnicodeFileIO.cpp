@@ -21,7 +21,7 @@ limitations under the License.
 using namespace std;
 using namespace UnicodeFileIO;
 
-UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::ReadString(const char* srcFileName, basic_stringstream<char16_t>& des, utf16_endian &endian) {
+UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::ReadString(const char* srcFileName, basic_stringstream<char16_t>& des, Endian &endian) {
 	Ret ret;
 	union {
 		char c[sizeof(char16_t)];
@@ -35,17 +35,17 @@ UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::ReadString(const char
 	try {
 		ifs.read(c, sizeof(char16_t));
 		if ((c[0] == (char)0xFF) && (c[1] == (char)0xFE)) {
-			endian = utf16_endian::LE;
+			endian = Endian::LE;
 		}
 		else if ((c[0] == (char)0xFE) && (c[1] == (char)0xFF)) {
-			endian = utf16_endian::BE;
+			endian = Endian::BE;
 		}
 		else {
 			throw Ret::SrcFile_UnknownBom;
 		}
 
 		switch (endian) {
-		case utf16_endian::LE:
+		case Endian::LE:
 			while (1) {
 				ifs.read(c, sizeof(char16_t));
 				if (ifs.good()) {
@@ -57,7 +57,7 @@ UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::ReadString(const char
 			}
 			break;
 
-		case utf16_endian::BE:
+		case Endian::BE:
 			while (1) {
 				ifs.get(c[1]);
 				ifs.get(c[0]);
@@ -91,7 +91,7 @@ UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::ReadString(const char
 	return ret;
 }
 
-UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::WriteString(const char* desFileName, basic_stringstream<char16_t>& src, const utf16_endian &endian) {
+UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::WriteString(const char* desFileName, basic_stringstream<char16_t>& src, const Endian& endian) {
 	Ret ret = Ret::Unknown;
 	union {
 		char c[sizeof(char16_t)];
@@ -106,7 +106,7 @@ UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::WriteString(const cha
 
 		src.seekg(ios_base::beg);
 		switch (endian) {
-		case utf16_endian::LE:
+		case Endian::LE:
 			ofs.put((char)0xFF);
 			ofs.put((char)0xFE);
 			while (1) {
@@ -120,7 +120,7 @@ UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::WriteString(const cha
 			}
 			break;
 
-		case utf16_endian::BE:
+		case Endian::BE:
 			ofs.put((char)0xFE);
 			ofs.put((char)0xFF);
 			while (1) {

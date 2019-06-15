@@ -30,7 +30,7 @@ limitations under the License.
 #include<sstream>
 #include <string>
 namespace UnicodeFileIO {
-	enum class utf16_endian : int {
+	enum class Endian : int {
 		BE,									//!<ビッグエンディアン
 		LE									//!<リトルエンディアン
 	};
@@ -46,8 +46,8 @@ namespace UnicodeFileIO {
 
 	};
 
-	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL ReadString(const char* srcFileName, std::basic_stringstream<char16_t>& des, utf16_endian &endian);
-	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL WriteString(const char* desFileName, std::basic_stringstream<char16_t>& src, const utf16_endian &endian);
+	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL ReadString(const char* srcFileName, std::basic_stringstream<char16_t>& des, Endian &endian);
+	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL WriteString(const char* desFileName, std::basic_stringstream<char16_t>& src, const Endian &endian);
 }
 
 #endif
