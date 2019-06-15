@@ -5,8 +5,8 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <PostBuildEvent>
-      <Command>xcopy /C /Y $(SolutionDir)UnicodeFileIO\lib\$(PlatformTarget)\$(Configuration)\libUnicodeFileIO.dll $(TargetDir)
-xcopy /C /Y $(SolutionDir)UnicodeFileIO\lib\$(PlatformTarget)\$(Configuration)\libUnicodeFileIO.pdb $(TargetDir)</Command>
+      <Command>copy /Y "$(SolutionDir)UnicodeFileIO\lib\$(PlatformTarget)\$(Configuration)\libUnicodeFileIO.dll" "$(TargetDir)"
+if exist "$(SolutionDir)UnicodeFileIO\lib\$(PlatformTarget)\$(Configuration)\libUnicodeFileIO.pdb" copy /Y "$(SolutionDir)UnicodeFileIO\lib\$(PlatformTarget)\$(Configuration)\libUnicodeFileIO.pdb" "$(TargetDir)"</Command>
     </PostBuildEvent>
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)UnicodeFileIO\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
