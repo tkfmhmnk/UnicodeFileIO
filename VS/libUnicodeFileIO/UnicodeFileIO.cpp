@@ -161,3 +161,137 @@ UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::WriteString(const cha
 	ofs.close();
 	return ret;
 }
+
+UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::OpenStream(const char* srcFileName, std::basic_istream<char16_t>* pStream, Endian& endian) {
+	Ret ret = Ret::Unknown;
+	basic_stringstream<char16_t>* pTemp = new basic_stringstream<char16_t>;
+
+	if (pTemp == nullptr) {
+		ret = Ret::MemoryAllocationErr;
+	}else{
+		ret = ReadString(srcFileName, *pTemp, endian);
+		if (ret != Ret::OK) {
+			delete pTemp;
+		}else{
+			pStream = pTemp;
+		}
+	}
+	return ret;
+}
+
+UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::CloseStream(const char* srcFileName, std::basic_istream<char16_t>* pStream, const Endian& endian) {
+	delete pStream;
+	return Ret::OK;
+}
+
+UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::OpenStream(const char* desFileName, std::basic_ostream<char16_t>* pStream, Endian& endian) {
+	pStream = new basic_stringstream<char16_t>;
+	if (pStream == nullptr) {
+		return Ret::MemoryAllocationErr;
+	}
+	else {
+		return Ret::OK;
+	}
+}
+
+UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::CloseStream(const char* desFileName, std::basic_ostream<char16_t>* pStream, const Endian& endian) {
+	Ret ret;
+	basic_stringstream<char16_t>* pStringStream;
+	if (pStream == nullptr) {
+		ret = Ret::NullPointerRefernce;
+	}
+	else {
+		pStringStream = dynamic_cast<basic_stringstream<char16_t>*>(pStream);
+		if (pStringStream == nullptr) {
+			ret =  Ret::InvalidStreamObject;
+			delete pStream;
+		}
+		else {
+			ret = WriteString(desFileName, *pStringStream, endian);
+			delete pStringStream;
+		}
+	}
+	return ret;
+}
+
+UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::OpenStream(const char* srcFileName, std::basic_istream<char>* pStream, Endian& endian) {
+	Ret ret;
+	basic_ifstream<char>* pTemp = new basic_ifstream<char>(srcFileName);
+
+	if (pTemp == nullptr) {
+		ret = Ret::MemoryAllocationErr;
+	}
+	else {
+		if(pTemp->is_open()){
+			pStream = pTemp;
+			ret = Ret::OK;
+		}
+		else {
+			delete pTemp;
+			ret = Ret::SrcFile_OpenErr;
+		}
+	}
+	return ret;
+}
+
+UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::CloseStream(const char* srcFileName, std::basic_istream<char>* pStream, const Endian& endian) {
+	Ret ret;
+	basic_ifstream<char>* pifstream;
+	if (pStream == nullptr) {
+		ret = Ret::NullPointerRefernce;
+	}
+	else {
+		pifstream = dynamic_cast<basic_ifstream<char>*>(pStream);
+		if (pifstream == nullptr) {
+			ret = Ret::InvalidStreamObject;
+			delete pStream;
+		}
+		else {
+			pifstream->close();
+			delete pifstream;
+			ret = Ret::OK;
+		}
+	}
+	return ret;
+}
+
+UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::OpenStream(const char* desFileName, std::basic_ostream<char>* pStream, Endian& endian) {
+	Ret ret;
+	basic_ofstream<char>* pTemp = new basic_ofstream<char>(desFileName);
+
+	if (pTemp == nullptr) {
+		ret = Ret::MemoryAllocationErr;
+	}
+	else {
+		if (pTemp->is_open()) {
+			pStream = pTemp;
+			ret = Ret::OK;
+		}
+		else {
+			delete pTemp;
+			ret = Ret::DesFile_OpenErr;
+		}
+	}
+	return ret;
+}
+
+UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL UnicodeFileIO::CloseStream(const char* desFileName, std::basic_ostream<char>* pStream, const Endian& endian) {
+	Ret ret;
+	basic_ofstream<char>* pofstream;
+	if (pStream == nullptr) {
+		ret = Ret::NullPointerRefernce;
+	}
+	else {
+		pofstream = dynamic_cast<basic_ofstream<char>*>(pStream);
+		if (pofstream == nullptr) {
+			ret = Ret::InvalidStreamObject;
+			delete pStream;
+		}
+		else {
+			pofstream->close();
+			delete pofstream;
+			ret = Ret::OK;
+		}
+	}
+	return ret;
+}
