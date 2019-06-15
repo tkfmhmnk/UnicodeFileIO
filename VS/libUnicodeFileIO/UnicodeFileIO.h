@@ -52,15 +52,15 @@ namespace UnicodeFileIO {
 	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL ReadString	(const char* srcFileName, std::basic_stringstream<char16_t>& des, Endian &endian);
 	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL WriteString	(const char* desFileName, std::basic_stringstream<char16_t>& src, const Endian &endian);
 
-	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL OpenStream	(const char* srcFileName, std::basic_istream<char>* pStream, Endian& endian);
-	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL OpenStream	(const char* desFileName, std::basic_ostream<char>* pStream, Endian& endian);
-	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL CloseStream	(const char* srcFileName, std::basic_istream<char>* pStream, const Endian& endian);
-	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL CloseStream	(const char* desFileName, std::basic_ostream<char>* pStream, const Endian& endian);
+	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL OpenStream	(const char* srcFileName, std::basic_istream<char>** ppStream, Endian& endian);
+	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL OpenStream	(const char* desFileName, std::basic_ostream<char>** ppStream, Endian& endian);
+	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL CloseStream	(const char* srcFileName, std::basic_istream<char>** ppStream, const Endian& endian);
+	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL CloseStream	(const char* desFileName, std::basic_ostream<char>** ppStream, const Endian& endian);
 
-	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL OpenStream	(const char* srcFileName, std::basic_istream<char16_t>* pStream, Endian& endian);
-	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL OpenStream	(const char* desFileName, std::basic_ostream<char16_t>* pStream, Endian& endian);
-	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL CloseStream	(const char* srcFileName, std::basic_istream<char16_t>* pStream, const Endian& endian);
-	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL CloseStream	(const char* desFileName, std::basic_ostream<char16_t>* pStream, const Endian& endian);
+	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL OpenStream	(const char* srcFileName, std::basic_istream<char16_t>** ppStream, Endian& endian);
+	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL OpenStream	(const char* desFileName, std::basic_ostream<char16_t>** ppStream, Endian& endian);
+	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL CloseStream	(const char* srcFileName, std::basic_istream<char16_t>** ppStream, const Endian& endian);
+	UNICODEFILEIO_ATTRBT Ret UNICODEFILEIO_CALL CloseStream	(const char* desFileName, std::basic_ostream<char16_t>** ppStream, const Endian& endian);
 
 }
 
