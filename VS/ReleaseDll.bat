@@ -21,5 +21,6 @@ copy UnicodeFileIO.props UnicodeFileIO\PropertySheet
 
 del UnicodeFileIO.zip
 powershell compress-archive UnicodeFileIO UnicodeFileIO.zip
+pause
 rmdir /s /q UnicodeFileIO
 pause
