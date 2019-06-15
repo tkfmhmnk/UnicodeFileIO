@@ -19,7 +19,7 @@ limitations under the License.
 #include <fstream>
 #include<sstream>
 #include <string>
-#include"../libUnicodeFileIO/UnicodeFileIO.h"
+#include"UnicodeFileIO.h"
 
 using namespace std;
 using namespace UnicodeFileIO;
